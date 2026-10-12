@@ -1,0 +1,193 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kas Kelas X AKL 4 🌷</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:15px;font-family:Arial,sans-serif;background:linear-gradient(135deg,#ffe5f0,#eee8ff,#e5fff4);color:#67465b}
+main{max-width:900px;margin:auto}
+header,.panel,.card{background:white;border-radius:22px;padding:18px;box-shadow:0 5px 18px #d58bad20}
+header{text-align:center;border:3px dashed #ffabc9}
+h1{color:#e65e96}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:15px 0}
+.card{text-align:center;padding:14px 5px;border:1px solid #ffd4e5}
+.card small{display:block;margin-bottom:8px}
+.card strong{color:#db578d;font-size:15px}
+input{font:inherit;padding:9px;border:1px solid #efcddd;border-radius:9px}
+.search{width:100%;margin-bottom:12px}
+.wrap{overflow-x:auto}
+table{width:100%;min-width:570px;border-collapse:collapse}
+th{background:#ffeaf3;color:#b7497a}
+td,th{padding:10px 8px;border-bottom:1px solid #f6dfeb;text-align:left}
+tr:nth-child(even){background:#fff9fc}
+.name{width:100%;min-width:155px}
+button{border:0;border-radius:10px;padding:9px;background:#ff8fb7;color:white;font-weight:bold}
+.done{background:#c8f3dd;color:#327457}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
+footer{text-align:center;color:#a18499;font-size:12px;margin:20px}
+@media(max-width:450px){body{padding:8px}.card{padding:10px 3px}.card strong{font-size:12px}}
+@media print{button,.search{display:none}body{background:white}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div>🌷 🧸 ✨ 🐰 🌷</div>
+<h1>Kas Kelas X AKL 4</h1>
+<p>♡ Catatan manis bendahara kelas ♡</p>
+<b>💰 Kas mingguan: Rp5.000/siswa</b>
+<p>Semangat bayar kas yaa! 🌸</p>
+</header>
+
+<div class="cards">
+<div class="card"><small>💰 Terkumpul</small><strong id="total">Rp0</strong></div>
+<div class="card"><small>✅ Sudah bayar</small><strong id="paid">0/36</strong></div>
+<div class="card"><small>🌸 Belum bayar</small><strong id="unpaid">36 siswa</strong></div>
+</div>
+
+<section class="panel">
+<h3>🎀 Daftar Kas Siswa</h3>
+<input id="search" class="search" placeholder="🔎 Cari nama siswa...">
+<div class="wrap">
+<table>
+<thead><tr><th>No.</th><th>Nama siswa</th><th>Kas</th><th>Status</th><th>Aksi</th></tr></thead>
+<tbody id="rows"></tbody>
+</table>
+</div>
+<p>💗 Nama siswa bisa diedit langsung.</p>
+<div class="actions">
+<button onclick="window.print()">🖨️ Cetak tabel</button>
+<button onclick="resetKas()">🔄 Reset kas minggu baru</button>
+</div>
+</section>
+<footer>Dibuat dengan ♡ untuk bendahara X AKL 4 🌷</footer>
+</main>
+
+<script>
+const KEY="kasXAKL4";
+const daftarNama=[
+"Abdul Halim",
+"Abyan Ahnaf Rafif Lukman",
+"Ade Hana Nur Sa'diyah Al-Husaeni",
+"Ajeng Artika Putri",
+"Alifah Shofiana",
+"Alexandra Davine Ose Sanga",
+"Ananda Vivian Aprilliani",
+"Andini Syakira Putri",
+"Anyndya Putri Merdiawan",
+"Arya Naufal",
+"Bilsmart Tarnelius Sirait",
+"Cahyaning Tyas Dewi Suman",
+"Calya Naeva Aristawidya",
+"Carrisa Dyah Ayu",
+"Daffa Aprilia Husna",
+"Dedi Saputra",
+"Dewi Cici Anugrah Lestari",
+"Finda Rasendriya",
+"Habibie Al Rizvan",
+"Hikmatun Nusuf Salsabilla",
+"Intan Nur Aini",
+"Jihan Zaskira",
+"Khalila Nadiah Ramadhani",
+"Muhammad Zidane Abdurrahman",
+"Nayra Anastasya",
+"Nazwa Safarina",
+"Nurul Matul Muidz",
+"Q'sya Adzuhry",
+"Rangga Aditya Pratama",
+"Reisya Isnaini",
+"Ulfa Suniyyah Rizqullah",
+"Violla Nur Haviza",
+"Widya Aulia Zahara",
+"Widy Nur Aullia Putri",
+"Windah Olivia Ramadhani",
+"Zhafira Cahya Ramadhani"
+];
+
+let data;
+try{
+data=JSON.parse(localStorage.getItem(KEY));
+}catch(e){data=null;}
+
+data=daftarNama.map((name,i)=>({
+name:name,
+paid:Array.isArray(data)&&data[i]?Boolean(data[i].paid):false
+}));
+
+function save(){
+try{localStorage.setItem(KEY,JSON.stringify(data));}
+catch(e){alert("Data tidak bisa disimpan di browser ini.");}
+}
+
+function rupiah(n){
+return "Rp"+n.toLocaleString("id-ID");
+}
+
+function render(){
+const rows=document.getElementById("rows");
+const q=document.getElementById("search").value.toLowerCase();
+rows.innerHTML="";
+
+data.forEach((s,i)=>{
+if(!s.name.toLowerCase().includes(q))return;
+
+const tr=document.createElement("tr");
+const no=document.createElement("td");
+no.textContent=i+1;
+tr.appendChild(no);
+
+const nameCell=document.createElement("td");
+const inp=document.createElement("input");
+inp.className="name";
+inp.value=s.name;
+inp.setAttribute("aria-label","Nama siswa "+(i+1));
+inp.addEventListener("change",()=>{
+data[i].name=inp.value.trim()||daftarNama[i];
+save();render();
+});
+nameCell.appendChild(inp);
+tr.appendChild(nameCell);
+
+const fee=document.createElement("td");
+fee.textContent=rupiah(5000);
+tr.appendChild(fee);
+
+const status=document.createElement("td");
+status.textContent=s.paid?"✅ Sudah":"🌸 Belum";
+tr.appendChild(status);
+
+const action=document.createElement("td");
+const btn=document.createElement("button");
+btn.textContent=s.paid?"Batalkan":"Sudah bayar";
+if(s.paid)btn.className="done";
+btn.onclick=()=>{
+data[i].paid=!data[i].paid;
+save();render();
+};
+action.appendChild(btn);
+tr.appendChild(action);
+rows.appendChild(tr);
+});
+
+const count=data.filter(s=>s.paid).length;
+document.getElementById("total").textContent=rupiah(count*5000);
+document.getElementById("paid").textContent=count+"/36";
+document.getElementById("unpaid").textContent=(36-count)+" siswa";
+}
+
+function resetKas(){
+if(confirm("Reset pembayaran untuk minggu baru?")){
+data.forEach(s=>s.paid=false);
+save();render();
+}
+}
+
+document.getElementById("search").addEventListener("input",render);
+render();
+</script>
+</body>
+</html>
+  
